@@ -7,6 +7,7 @@ programs: ex3 ex3-broken
 clean:
 	rm -f ex3
 	rm -f ex3-broken
+	rm -f beep
 
 cleanup:
 	rm -rf *.dSYM
