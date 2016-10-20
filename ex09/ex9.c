@@ -9,4 +9,9 @@ int main(int argc, char *argv[])
         printf("%d\n", i);
         i--;
     }
+
+    // Just adding a final newline.
+    printf("\n");
+
+    return 0;
 }
