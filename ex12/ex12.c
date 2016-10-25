@@ -8,6 +8,14 @@ int main(int argc, char *argv[])
         'Z', 'e', 'd', ' ', 'A', '.', ' ', 'S', 'h', 'a', 'w', '\0'
     };
 
+    // Note to self; size is already allocated befor there are any values.
+    int another_area[4];
+    printf("The size of another_area: %ld\n", sizeof(another_area));
+
+    // This is just gibberish...
+    printf("The first area is %d: the second %d\n", another_area[0], another_area[1]);
+
+
     // Warning: on some systems you may have to change the 
     // %ld to in this code to a %u since it will use unsigned ints
     printf("The size of an int %ld\n", sizeof(int));
@@ -20,6 +28,12 @@ int main(int argc, char *argv[])
     printf("The size of full_name: %ld\n", sizeof(full_name));
     printf("The numberof chars: %ld\n", sizeof(full_name) / sizeof(char));
     printf("name = \"%s\" and full_name = \"%s\"\n", name, full_name);
+
+    printf("int: %ld\n", sizeof(int));
+    printf("float: %ld\n", sizeof(float));
+    printf("double: %ld\n", sizeof(double));
+    printf("long: %ld\n", sizeof(long));
+    printf("unsigned long: %ld\n", sizeof(unsigned long));
 
     return 0;
 }
