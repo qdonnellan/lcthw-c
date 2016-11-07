@@ -115,19 +115,94 @@ void Database_create(struct Connection *conn)
     }
 }
 
+void Database_set(struct Connection *conn, int id, const char *name, 
+    const char *email)
+{
+    struct Address *addr = &conn->db->rows[id];
+    if (addr->set) {
+        die("Address is already set!");
+    }
+
+    addr->set = 1;
+
+    // WARNING: bug! Read "How to break this" to fix it.
+    char *res = strcpy(addr->name, name, MAX_DATA);
+
+    // deomonstrate the strcpy bug
+    if (!res) {
+        die("Name copy fail");
+    }
+
+    res = strcpy(addr->email, email, MAX_DATA);
+    if (!res) {
+        die("Email copy fail");
+    }
+}
+
+void Database_get(struct Connection *conn, int id)
+{
+    struct Address *addr = &conn->db->rows[id];
+    if (addr->set) {
+        Address_print(addr);
+    } else {
+        die("ID is not set.");
+    }
+}
+
+void Database_delete(struct Connection *conn, int id)
+{
+    struct Address addr = {.id = id, .set = 0};
+    conn->db->rows[id] = addr;
+}
+
 void Database_list(struct Connection *conn)
 {
     int i = 0;
     struct Database *db = conn->db;
 
     for (i = 0; i < MAX_ROWS; i++) {
-        // I AM HERE.
+        struct Address *cur = &db->rows[i];
+        if (cur->set) {
+            Address_print(cur);
+        }
     }
 }
 
 
 int main(int argc, char *argv[])
 {
+
+    if (argc < 3) {
+        die("USAGE: ex17 <dbfile> <action> [action params]");
+    }
+
+    char *filename = argv[1];
+    char action = argv[2][0];
+    struct Connection *conn = Database_open(filename, action);
+
+    int id = 0;
+
+    if (argc > 3) id = atoi(argv[3]);
+    if (id >= MAX_ROWS) die("There's not that many records.");
+
+    switch (action) {
+        case 'c':
+            Database_create(conn);
+            Database_write(conn);
+            break;
+        case 'g':
+            if (argc != 4) {
+                die("Need an id to get!");
+            }
+
+            Database_get(conn, id);
+            break;
+
+        // HERE I AM.
+
+    }
+
+
 
     struct Address joe = {.id=1, .name="Joe", .email="Dude"};
     struct Address *joeptr = &joe;
