@@ -70,7 +70,7 @@ struct Connection *Database_open(const char *filename, char mode)
     }
 
     if (!conn->file) {
-        die("Faile to open file.");
+        die("Failed to open file.");
     }
 
     return conn;
@@ -92,6 +92,8 @@ void Database_close(struct Connection *conn)
 
 void Database_write(struct Connection *conn)
 {
+    rewind(conn->file);
+
     int rc = fwrite(conn->db, sizeof(struct Database), 1, conn->file);
     if (rc != 1) {
         die("Failed to write database.");
@@ -126,14 +128,14 @@ void Database_set(struct Connection *conn, int id, const char *name,
     addr->set = 1;
 
     // WARNING: bug! Read "How to break this" to fix it.
-    char *res = strcpy(addr->name, name, MAX_DATA);
+    char *res = strncpy(addr->name, name, MAX_DATA);
 
     // deomonstrate the strcpy bug
     if (!res) {
         die("Name copy fail");
     }
 
-    res = strcpy(addr->email, email, MAX_DATA);
+    res = strncpy(addr->email, email, MAX_DATA);
     if (!res) {
         die("Email copy fail");
     }
@@ -190,22 +192,41 @@ int main(int argc, char *argv[])
             Database_create(conn);
             Database_write(conn);
             break;
+
         case 'g':
             if (argc != 4) {
-                die("Need an id to get!");
+                die("Need an id to get");
             }
 
             Database_get(conn, id);
             break;
 
-        // HERE I AM.
+        case 's':
+            if (argc != 6) {
+                die("Need, name, id, email, to set");
+            }
+            Database_set(conn, id, argv[4], argv[5]);
+            Database_write(conn);
+            break;
+
+        case 'd':
+            if (argc != 4) {
+                die("Need id to delete");
+            }
+
+            Database_delete(conn, id);
+            Database_write(conn);
+            break;
+
+        case 'l':
+            Database_list(conn);
+            break;
+
+        default:
+            die("Invalid action: c=create, g=get, s=set, d=delete, l=list");
 
     }
 
-
-
-    struct Address joe = {.id=1, .name="Joe", .email="Dude"};
-    struct Address *joeptr = &joe;
-    Address_print(joeptr);
+    Database_close(conn);
     return 0;
 }
