@@ -1,5 +1,4 @@
-CFLAGS = -Wall -g
-
+CFLAGS = -Wall -g -DNDEBUG
 
 clean:
 	rm -rf *dSYM
